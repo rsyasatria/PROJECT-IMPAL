@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NutriSurvey</title>
+<style>
+:root{
+  --g1:#8fdc5a; --g2:#c5e063; --green:#4caf50; --green-d:#2e7d32;
+  --bg:#eef1ee; --surface:#ffffff; --text:#1f2a1f; --muted:#6b756b; --line:#d9ded9;
+  --ok-bg:#e8f5e9; --warn-bg:#fff8dc; --warn-line:#f2c94c; --stage:#dfe5df;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121712; --surface:#1b231b; --text:#e8efe8; --muted:#98a498; --line:#2f3a2f;
+    --ok-bg:#1e3322; --warn-bg:#3a3414; --warn-line:#8a7a20; --stage:#0c100c; --green-d:#7bd47f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121712; --surface:#1b231b; --text:#e8efe8; --muted:#98a498; --line:#2f3a2f;
+  --ok-bg:#1e3322; --warn-bg:#3a3414; --warn-line:#8a7a20; --stage:#0c100c; --green-d:#7bd47f;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--stage);color:var(--text);font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap}
+.phone{width:100%;max-width:390px;height:100%;max-height:800px;background:var(--bg);position:relative;overflow:hidden;display:flex;flex-direction:column}
+@media (min-width:520px){.phone{height:800px;border-radius:38px;border:8px solid #1c1c1c;box-shadow:0 20px 50px rgba(0,0,0,.25)}}
+.screen{display:none;flex:1;flex-direction:column;padding:28px 22px;overflow-y:auto}
+.screen.active{display:flex}
+.title{background:linear-gradient(90deg,var(--g1),var(--g2));color:#fff;font-weight:700;font-size:19px;text-align:center;padding:16px;border-radius:8px;text-shadow:0 1px 2px rgba(0,0,0,.18)}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #2b7be4;outline-offset:2px}
+.btn{width:100%;border:0;background:var(--green);color:#fff;font-weight:700;padding:13px;border-radius:7px;letter-spacing:.3px;margin-top:12px}
+.btn.ghost{background:var(--surface);color:var(--muted);border:1px solid var(--line);font-weight:500}
+label{display:block;font-size:12px;margin:14px 0 5px}
+input[type=text],input[type=email],input[type=password]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--text);font:inherit}
+.row{display:flex;align-items:center;gap:8px;font-size:12px;margin-top:12px}
+.row a,.link{color:#2b7be4;font-size:12px}
+/* splash */
+#splash{background:var(--green);color:#fff;align-items:center;justify-content:center;text-align:center}
+#splash .logo{width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:42px;margin-bottom:18px}
+#splash h1{font-size:26px}
+#splash p{font-size:13px;margin:6px 0 40px}
+#splash .btn{max-width:300px;border-radius:30px;padding:14px}
+#splash .btn.in{background:#fff;color:var(--green)}
+#splash .btn.up{background:transparent;border:2px solid #fff}
+#splash small{font-size:11px;margin-top:26px;opacity:.95}
+/* tabs */
+.tabs{display:flex;margin:22px 0 14px;border-radius:4px;overflow:hidden}
+.tabs button{flex:1;border:0;padding:11px;font-weight:600;background:var(--ok-bg);color:var(--green-d)}
+.tabs button.on{background:var(--green);color:#fff}
+h3{font-size:13px;margin-top:4px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;margin:18px 0 6px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.social{width:100%;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:12px;border-radius:6px;margin-top:10px;font-size:12px}
+.dot{width:10px;height:10px;border-radius:50%}
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-top:14px;font-size:11px;color:var(--muted)}
+.rules b{color:var(--text);display:block;margin-bottom:3px}
+/* verify */
+.center{text-align:center}
+.mail{width:78px;height:78px;border-radius:50%;border:3px solid #3a9bf0;background:var(--surface);display:grid;place-items:center;font-size:32px;margin:44px auto 20px}
+.warn{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:6px;padding:12px;font-size:11px;margin:20px 0 6px}
+.ok{display:flex;gap:10px;align-items:center;background:var(--ok-bg);border:1px solid var(--green);border-radius:6px;padding:12px;margin:22px 0 4px;font-size:12px}
+.ok i{width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-style:normal;font-size:13px;flex:none}
+.ok span{display:block;font-size:10px;color:var(--muted)}
+/* dashboard */
+.empty-ic{width:68px;height:68px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:30px;margin:38px auto 14px}
+.tips{background:var(--ok-bg);border:1px solid var(--green);border-radius:6px;padding:10px 12px;margin-top:22px;font-size:11px}
+.tips b{color:var(--green-d)}
+.tips ol{padding-left:16px;margin-top:4px;color:var(--muted)}
+.btn.big small{display:block;font-weight:400;font-size:10px;opacity:.95}
+.jump{display:flex;flex-direction:column;gap:6px;min-width:150px}
+.jump button{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:8px 12px;border-radius:6px;text-align:left;font-size:12px}
+.jump button.on{border-color:var(--green);color:var(--green-d);font-weight:700}
+@media (max-width:760px){.jump{display:none}}
+</style>
+</head>
+<body>
+
+<div class="jump" id="jump" aria-label="Lompat antar layar"></div>
+
+<main class="phone">
+
+  <section class="screen active" id="splash">
+    <div class="logo" aria-hidden="true">🥗</div>
+    <h1>NutriSurvey</h1>
+    <p>Pantau Nutrisi, Hidup Lebih Sehat</p>
+    <button class="btn in" data-go="signin">MASUK</button>
+    <button class="btn up" data-go="register">DAFTAR</button>
+    <small>Dengan melanjutkan, Anda menyetujui<br><u>Syarat &amp; Ketentuan</u></small>
+  </section>
+
+  <section class="screen" id="signin">
+    <div class="title">NutriSurvey</div>
+    <div class="tabs"><button class="on">Sign In</button><button data-go="register">Sign Up</button></div>
+    <h3>Masuk ke Akun Anda</h3>
+    <label for="e1">Email:</label><input id="e1" type="email" placeholder="contoh@email.com">
+    <label for="p1">Password:</label><input id="p1" type="password" value="password">
+    <a class="link" href="#" style="display:block;text-align:center;margin-top:10px">Lupa Password?</a>
+    <button class="btn" data-go="dashboard">MASUK</button>
+    <div class="divider">atau</div>
+    <button class="social"><span class="dot" style="background:#4285f4"></span>Masuk dengan Google</button>
+    <button class="social"><span class="dot" style="background:#1877f2"></span>Masuk dengan Facebook</button>
+  </section>
+
+  <section class="screen" id="register">
+    <div class="title">Daftar Akun Anda</div>
+    <h3 style="margin-top:22px">Buat Akun Baru</h3>
+    <label for="n">Nama Lengkap:</label><input id="n" type="text" placeholder="Masukkan nama lengkap">
+    <label for="e2">Email:</label><input id="e2" type="email" placeholder="contoh@email.com">
+    <label for="p2">Password:</label><input id="p2" type="password" placeholder="Minimal 8 karakter">
+    <label for="p3">Konfirmasi Password:</label><input id="p3" type="password" placeholder="Ketik ulang password">
+    <div class="rules"><b>Password harus mengandung:</b>✓ Minimal 8 karakter<br>✓ Huruf besar dan kecil</div>
+    <div class="row"><input type="checkbox" id="agree"><label for="agree" style="margin:0">Saya menyetujui Syarat &amp; Ketentuan</label></div>
+    <button class="btn" data-go="verify">DAFTAR</button>
+  </section>
+
+  <section class="screen" id="verify">
+    <div class="title">Verifikasi Email Anda</div>
+    <div class="center">
+      <div class="mail" aria-hidden="true">📧</div>
+      <h3 style="font-size:15px">Cek Email Anda!</h3>
+      <p style="font-size:12px;color:var(--muted);margin-top:6px">Kami telah mengirim link verifikasi ke:</p>
+      <p style="color:var(--green-d);font-weight:700;margin-top:4px">user@example.com</p>
+      <div class="warn">Silakan periksa inbox atau folder spam email Anda dan klik link verifikasi untuk mengaktifkan akun.</div>
+    </div>
+    <button class="btn" data-go="welcome">BUKA EMAIL</button>
+    <button class="btn ghost">Kirim Ulang Email</button>
+  </section>
+
+  <section class="screen" id="welcome">
+    <div class="title">Selamat Datang!</div>
+    <div class="ok"><i>✓</i><div><b>Email Terverifikasi!</b><span>Silakan login untuk melanjutkan</span></div></div>
+    <label for="e3">Email:</label><input id="e3" type="email" value="user@example.com">
+    <label for="p4">Password:</label><input id="p4" type="password" value="password">
+    <div class="row"><input type="checkbox" id="rem"><label for="rem" style="margin:0">Ingat saya</label></div>
+    <button class="btn" data-go="dashboard">MASUK</button>
+  </section>
+
+  <section class="screen" id="dashboard">
+    <div class="title">Dashboard NutriSurvey</div>
+    <div class="center">
+      <div class="empty-ic" aria-hidden="true">📊</div>
+      <h3 style="font-size:14px">Belum Ada Data Konsumsi</h3>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px">Mulai catat makanan Anda untuk melihat ringkasan nutrisi harian di sini.</p>
+    </div>
+    <button class="btn big" style="margin-top:22px">+ Catat Makanan Pertama<small>Mulai pantau nutrisi sekarang</small></button>
+    <div class="tips"><b>💡 Tips Memulai</b>
+      <ol><li>Catat setiap makanan yang Anda makan</li><li>Update berat badan secara rutin</li><li>Lihat rekomendasi menu sehat</li></ol>
+    </div>
+    <button class="btn ghost" data-go="splash" style="margin-top:auto">Keluar</button>
+  </section>
+
+</main>
+
+<script>
+const names={splash:"1. Splash",signin:"2. Masuk",register:"3. Daftar",verify:"4. Verifikasi Email",welcome:"5. Selamat Datang",dashboard:"6. Dashboard"};
+const jump=document.getElementById("jump");
+function go(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
+  jump.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.go===id));
+}
+Object.entries(names).forEach(([id,t])=>{
+  const b=document.createElement("button");b.textContent=t;b.dataset.go=id;jump.appendChild(b);
+});
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-go]");
+  if(t){e.preventDefault();go(t.dataset.go);}
+  if(e.target.closest("a.link"))e.preventDefault();
+});
+go("splash");
+</script>
+</body>
+</html>
