@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NutriSurvey - Laporan Analisis</title>
+<style>
+:root{--g1:#8fdc5a;--g2:#c5e063;--green:#4caf50;--green-d:#2e7d32;--blue:#2196f3;--amber:#fb8c00;
+--bg:#eef1ee;--surface:#fff;--text:#1f2a1f;--muted:#6b756b;--line:#d9ded9;--ok-bg:#e8f5e9;--sel:#e3f0fc;--stage:#dfe5df;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121712;--surface:#1b231b;--text:#e8efe8;--muted:#98a498;--line:#2f3a2f;--ok-bg:#1e3322;--sel:#17304a;--stage:#0c100c;--green-d:#7bd47f}}
+:root[data-theme="dark"]{--bg:#121712;--surface:#1b231b;--text:#e8efe8;--muted:#98a498;--line:#2f3a2f;--ok-bg:#1e3322;--sel:#17304a;--stage:#0c100c;--green-d:#7bd47f}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--stage);color:var(--text);font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;font-size:14px;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap}
+.phone{position:relative;width:100%;max-width:390px;height:100%;max-height:800px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+@media (min-width:520px){.phone{height:800px;border-radius:38px;border:8px solid #1c1c1c;box-shadow:0 20px 50px rgba(0,0,0,.25)}}
+.screen{display:none;flex:1;flex-direction:column;padding:28px 22px;overflow-y:auto}
+.screen.active{display:flex}
+.title{background:linear-gradient(90deg,var(--g1),var(--g2));color:#fff;font-weight:700;font-size:19px;text-align:center;padding:16px;border-radius:8px;text-shadow:0 1px 2px rgba(0,0,0,.18)}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid #2b7be4;outline-offset:2px}
+.btn{width:100%;border:0;background:var(--green-d);color:#fff;font-weight:700;padding:13px;border-radius:7px;margin-top:12px}
+.btn.blue{background:#1976d2}
+.btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+.push{margin-top:auto}
+h3{font-size:13px}
+.sub{font-size:11px;color:var(--muted)}
+.center{text-align:center}
+.btns2{display:flex;gap:10px}
+.card{border-radius:12px;padding:14px;margin-top:12px;border:2px solid var(--green)}
+.card h4,.bbc h4{font-size:12px;text-align:center;margin-bottom:8px}
+.cal{background:var(--ok-bg)}.cal h4{color:var(--green-d)}
+.calrow{display:flex;align-items:center;justify-content:space-around;text-align:center}
+.calrow b{display:block;font-size:20px}.calrow small{font-size:10px;color:var(--muted)}
+.ring{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) 75%,var(--line) 0)}
+.ring span{width:58px;height:58px;border-radius:50%;background:var(--ok-bg);display:grid;place-items:center;font-weight:800;color:var(--green-d)}
+.sisa{text-align:center;font-size:10px;font-weight:700;color:var(--green-d);margin-top:6px}
+.macro,.week{background:var(--surface);border-color:var(--line)}
+.bar{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px}
+.bar i{flex:1;height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar em{display:block;height:100%;border-radius:4px}
+.bar span{width:64px;text-align:right;font-size:10px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.meals-c{background:color-mix(in srgb,#fb8c00 14%,var(--surface));border-color:#fb8c00}.meals-c h4{color:#e67e00}
+.bb-c{background:var(--sel);border-color:var(--blue)}.bb-c h4{color:var(--blue)}
+.mrow{display:flex;justify-content:space-between;background:var(--surface);border-radius:6px;padding:6px 8px;margin-top:5px;font-size:11px}
+.wk{display:flex;justify-content:space-around;text-align:center;font-size:11px}
+.wk small{display:block;font-size:9px;color:var(--muted)}
+.rec{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#6a3fb5;color:#fff;border-radius:12px;padding:14px;margin-top:12px;font-size:11px}
+.rec button{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:8px;padding:10px 16px;white-space:nowrap}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 16px}
+.qa button{background:var(--surface);color:var(--text);border:2px solid;border-radius:10px;padding:8px 2px;font-size:10px;font-weight:700}
+.qa span{display:block;font-size:18px}
+.nav{display:flex;justify-content:space-around;border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
+.nav button{border:0;background:none;color:var(--muted);font-size:10px;padding:6px 10px;border-radius:10px}
+.nav button.on{background:var(--ok-bg);color:var(--green-d);font-weight:700}
+.nav span{display:block;font-size:18px}
+/* laporan */
+.bbc{border-radius:10px;padding:14px;margin-top:14px;text-align:center;font-size:11px;color:var(--muted);border:1px solid var(--line);background:var(--surface)}
+.bbc.g{background:var(--ok-bg);border-color:var(--green)}
+.bbc.b{background:var(--sel);border-color:var(--blue)}
+.bbc.o{background:color-mix(in srgb,#fb8c00 14%,var(--surface));border-color:#fb8c00;color:var(--text)}
+.bbc h4{color:var(--text)}
+.opt2{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:var(--surface);color:var(--text);border:2px solid var(--line);border-radius:8px;padding:12px;margin-top:10px}
+.opt2 b{display:block;font-size:13px}.opt2 small{color:var(--muted);font-size:10px}
+.opt2.bl{border-color:var(--blue)}
+.opt2.or{border-color:#fb8c00;background:color-mix(in srgb,#fb8c00 12%,var(--surface))}
+.stat3{display:flex;justify-content:space-around;text-align:center;margin:6px 0}
+.stat3 b{display:block;font-size:20px}.stat3 small{font-size:9px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.kpi{border-radius:8px;padding:12px;color:#fff;font-size:10px}
+.kpi b{display:block;font-size:24px;margin:3px 0}
+.bars{display:flex;align-items:flex-end;gap:6px;height:90px;border-bottom:1px solid var(--line)}
+.bars i{flex:1;background:var(--green);border-radius:3px 3px 0 0}
+.bars i.t{background:var(--amber)}
+.lbl{display:flex;gap:6px;margin-top:4px}.lbl span{flex:1;font-size:9px;color:var(--muted)}
+.ic{width:68px;height:68px;border-radius:50%;background:var(--sel);display:grid;place-items:center;font-size:30px;margin:0 auto 14px}
+.prog2{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:16px 0}
+.prog2 i{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{border-radius:6px;padding:8px;font-size:10px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.chip.ok{background:var(--ok-bg);border-color:var(--green);color:var(--green-d)}
+.chip.wait{background:color-mix(in srgb,#fb8c00 14%,var(--surface));border-color:#fb8c00;color:var(--text)}
+.warn-ic{width:40px;height:40px;flex:none;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;font-size:20px}
+#toast{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:20px;font-size:11px;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+.jump{display:flex;flex-direction:column;gap:6px;min-width:170px}
+.jump button{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:8px 12px;border-radius:6px;text-align:left;font-size:12px}
+.jump button.on{border-color:var(--green);color:var(--green-d);font-weight:700}
+.jump label{font-size:11px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center}
+@media (max-width:760px){.jump{display:none}}
+</style>
+</head>
+<body>
+<div class="jump" id="jump" aria-label="Menu prototipe"></div>
+
+<main class="phone">
+
+  <section class="screen active" id="dashboard">
+    <div class="title">Dashboard NutriSurvey</div>
+    <div class="card cal"><h4>Kalori Harian</h4>
+      <div class="calrow"><div><small>Dikonsumsi</small><b>1500</b><small>kal</small></div>
+        <div class="ring" role="img" aria-label="75 persen dari target"><span>75%</span></div>
+        <div><small>Target</small><b>2000</b><small>kal</small></div></div>
+      <div class="sisa">Sisa: 500 kal</div></div>
+    <div class="card macro"><h4>Nutrisi Makro</h4>
+      <div class="bar">💪<i><em style="width:75%;background:#fb8c00"></em></i><span>45/60g</span></div>
+      <div class="bar">🍚<i><em style="width:80%;background:#2196f3"></em></i><span>200/250g</span></div>
+      <div class="bar">🥑<i><em style="width:62%;background:#e53935"></em></i><span>40/65g</span></div></div>
+    <div class="two">
+      <div class="card meals-c"><h4>🍽️ Makan</h4>
+        <div class="mrow"><span>🌅 Sarapan</span><b>450</b></div><div class="mrow"><span>☀️ Siang</span><b>1050</b></div><div class="mrow"><span>🌙 Malam</span><b>-</b></div></div>
+      <div class="card bb-c"><h4>📊 BB</h4>
+        <svg viewBox="0 0 100 40" width="100%" aria-hidden="true" style="background:var(--surface);border-radius:6px"><polyline points="6,30 30,28 55,22 80,14 94,10" fill="none" stroke="#2196f3" stroke-width="2"/><circle cx="94" cy="10" r="3" fill="#fb8c00"/></svg>
+        <div class="center" style="margin-top:6px"><b style="color:var(--blue);font-size:18px">65 kg</b></div></div>
+    </div>
+    <div class="card week"><h4>Minggu Ini</h4>
+      <div class="wk"><div><b>✓ 5/7 hari</b><small>Target</small></div><div><b>↓ -1.2kg</b><small>Turun</small></div><div><b>🔥 7 hari</b><small>Streak</small></div></div></div>
+    <div class="rec"><div><b>✨ Rekomendasi</b><br>Ikan Bakar + Sayur (420 kal)<br><small>Cocok dengan sisa kalori</small></div><button data-soon>Lihat →</button></div>
+    <div class="qa">
+      <button data-soon style="border-color:#4caf50"><span>📝</span>Catat<br><small>Makanan</small></button>
+      <button data-soon style="border-color:#2196f3"><span>⚖️</span>Update<br><small>Berat</small></button>
+      <button data-soon style="border-color:#fb8c00"><span>🍽️</span>Menu<br><small>Sehat</small></button>
+      <button data-go="rep" style="border-color:#9c27b0"><span>📈</span>Laporan<br><small>Analisis</small></button></div>
+    <nav class="nav" aria-label="Navigasi utama"><button class="on"><span>🏠</span>Beranda</button><button data-soon><span>📊</span>Riwayat</button><button data-soon><span>🍽️</span>Menu</button><button data-soon><span>👤</span>Profil</button></nav>
+  </section>
+
+  <section class="screen" id="rep">
+    <div class="title">Laporan Analisis</div>
+    <div class="bbc b"><b style="color:var(--blue);font-size:12px">📊 Pantau Progress Anda</b><div style="margin-top:4px">Lihat perkembangan nutrisi dan kesehatan Anda dari waktu ke waktu</div></div>
+    <h3 style="margin-top:16px">Pilih Periode Laporan:</h3>
+    <button class="opt2 bl" data-go="dashboard"><span><b>📅 Harian</b><small>Lihat data konsumsi hari ini</small></span><span aria-hidden="true">→</span></button>
+    <button class="opt2 or" data-go="reploading"><span><b>📊 Mingguan</b><small>Analisis 7 hari terakhir</small></span><span aria-hidden="true">→</span></button>
+    <button class="opt2" data-soon><span><b>📈 Bulanan</b><small>Tren 30 hari terakhir</small></span><span aria-hidden="true">→</span></button>
+    <div class="bbc"><h4>Ringkasan Cepat (7 Hari)</h4>
+      <div class="stat3"><div><b id="q-avg" style="color:var(--green-d)"></b><small>Rata-rata<br>kal/hari</small></div><div><b id="q-hit" style="color:var(--blue)"></b><small>Target Tercapai<br>hari</small></div><div><b style="color:#e67e00">-1.2</b><small>Berat Turun<br>kg</small></div></div>
+      <div style="color:var(--green-d);font-weight:700">✓ Progres Anda sesuai target</div></div>
+    <button class="btn ghost push" data-go="dashboard">← Kembali ke Dashboard</button>
+  </section>
+
+  <section class="screen" id="reploading">
+    <div class="title">Analisis Mingguan</div>
+    <div class="bbc" style="margin-top:30px;padding:26px 16px">
+      <div class="ic" aria-hidden="true">📊</div>
+      <h4 style="font-size:14px">Memproses Data...</h4><div>Menganalisis konsumsi 7 hari terakhir</div>
+      <div class="prog2" id="ld-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="ld-fill"></i></div>
+      <div class="chips"><div class="chip ok">✓ Data konsumsi<br>Berhasil dimuat</div><div class="chip wait" id="ch2"></div><div class="chip" id="ch3"></div></div>
+    </div>
+  </section>
+
+  <section class="screen" id="rep7">
+    <div class="title">Laporan 7 Hari</div>
+    <div class="bbc g" id="r-range" style="font-weight:700;color:var(--green-d)"></div>
+    <div class="kpis">
+      <div class="kpi" style="background:#2e7d32">Rata-rata Kalori<b id="r-avg"></b>kal/hari<br>Target: 2000</div>
+      <div class="kpi" style="background:#1976d2">Perubahan BB<b>-1.2kg</b>Dari 66.2 ke 65 kg</div>
+    </div>
+    <div class="bbc"><h4>Grafik Asupan Kalori</h4><div class="bars" id="r-bars" role="img" aria-label="Grafik batang asupan kalori 7 hari"></div><div class="lbl" id="r-lbl"></div></div>
+    <div class="bbc"><h4>Perbandingan Asupan Nutrisi</h4>
+      <div class="bar">💪<i><em style="width:87%;background:#fb8c00"></em></i><span>52/60g</span></div>
+      <div class="bar">🍚<i><em style="width:84%;background:#2196f3"></em></i><span>210/250g</span></div>
+      <div class="bar">🥑<i><em style="width:74%;background:#e53935"></em></i><span>48/65g</span></div></div>
+    <div class="btns2" style="margin-top:14px"><button class="btn" data-soon style="margin:0">Export PDF</button><button class="btn ghost" data-soon style="margin:0">Lihat Detail</button></div>
+    <button class="btn ghost" data-go="rep">← Kembali</button>
+  </section>
+
+  <section class="screen" id="repnone">
+    <div class="title">Analisis Mingguan</div>
+    <div class="bbc o" style="display:flex;gap:12px;align-items:center;text-align:left"><span class="warn-ic" aria-hidden="true">⚠</span><div><b style="font-size:13px">Data Belum Cukup</b><br>Anda baru menggunakan aplikasi kurang dari 7 hari.<br><small id="n-have"></small></div></div>
+    <div class="bbc b" style="text-align:left"><h4 style="color:var(--blue);text-align:left">💡 Apa yang bisa dilakukan?</h4><ol style="padding-left:16px;line-height:1.7;color:var(--text)"><li>Lihat laporan harian untuk data hari ini</li><li>Lanjutkan catat makanan setiap hari</li><li>Kembali dalam beberapa hari untuk melihat analisis mingguan lengkap</li></ol></div>
+    <div class="bbc"><h4 id="n-title"></h4><div class="stat3"><div><b id="n-avg" style="color:var(--green-d)"></b><small>Rata-rata<br>kal/hari</small></div><div><b id="n-hit" style="color:var(--blue)"></b><small>Target Tercapai<br>hari</small></div></div></div>
+    <div class="btns2 push"><button class="btn blue" data-go="dashboard" style="margin:0">Laporan Harian</button><button class="btn ghost" data-soon style="margin:0">Catat Makanan</button></div>
+  </section>
+
+  <div id="toast" role="status"></div>
+</main>
+
+<script>
+const names={dashboard:"1. Dashboard",rep:"2. Laporan Analisis",reploading:"3. Memproses",rep7:"4. Laporan 7 Hari",repnone:"5. Data Belum Cukup"};
+const WEEK=[1850,1780,1450,1700,1380,1890,1500], FEW=[1400,1700,1640];
+const $=id=>document.getElementById(id), jump=$("jump");
+let cur="dashboard", tm, tt;
+
+const stat=a=>({n:a.length,avg:Math.round(a.reduce((x,y)=>x+y,0)/a.length),hits:a.filter(c=>c>=1500&&c<=2000).length});
+const day=i=>{const d=new Date();d.setDate(d.getDate()-i);return d};
+const sh=d=>d.toLocaleDateString("id-ID",{day:"numeric",month:"short"});
+
+function fill(){
+  const w=stat(WEEK), s=stat(FEW), mx=Math.max(2000,...WEEK);
+  $("q-avg").textContent=$("r-avg").textContent=w.avg; $("q-hit").textContent=w.hits+"/"+w.n;
+  $("r-range").textContent=sh(day(6))+" - "+sh(day(0))+" "+day(0).getFullYear()+" (7 hari)";
+  $("r-bars").innerHTML=WEEK.map((c,i)=>`<i class="${i===6?"t":""}" style="height:${c/mx*100}%" title="${c} kal"></i>`).join("");
+  $("r-lbl").innerHTML=WEEK.map((c,i)=>`<span>${day(6-i).toLocaleDateString("id-ID",{weekday:"short"})}</span>`).join("");
+  $("n-have").textContent="Data tersedia "+s.n+" dari 7 hari";
+  $("n-title").textContent="Data Tersedia ("+s.n+" hari)";
+  $("n-avg").textContent=s.avg; $("n-hit").textContent=s.hits+"/"+s.n;
+}
+function go(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active",s.id===id));
+  jump.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.go===id));
+  cur=id;
+  if(id!=="reploading")clearInterval(tm);
+  if(id==="reploading")startLoad();
+}
+function startLoad(){
+  clearInterval(tm); let p=0;
+  const set=()=>{
+    $("ld-fill").style.width=p+"%"; $("ld-bar").setAttribute("aria-valuenow",p);
+    $("ch2").className="chip "+(p>=60?"ok":"wait"); $("ch2").innerHTML=p>=60?"✓ Menghitung<br>Selesai":"⏳ Menghitung<br>Rata-rata...";
+    $("ch3").className="chip "+(p>=90?"ok":""); $("ch3").innerHTML=p>=90?"✓ Grafik<br>Siap":"Membuat grafik...";
+  };
+  set();
+  tm=setInterval(()=>{p+=10;set();if(p>=100){clearInterval(tm);setTimeout(()=>{if(cur==="reploading")go($("sparse").checked?"repnone":"rep7")},300)}},250);
+}
+Object.entries(names).forEach(([id,t])=>{const b=document.createElement("button");b.textContent=t;b.dataset.go=id;jump.appendChild(b)});
+jump.insertAdjacentHTML("beforeend",'<label><input type="checkbox" id="sparse"> Simulasi data kurang dari 7 hari</label>');
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]"); if(g){go(g.dataset.go);return}
+  if(e.target.closest("[data-soon]")){
+    const t=$("toast");t.textContent="Fitur ini segera hadir";t.classList.add("show");
+    clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1800);
+  }
+});
+fill(); go("dashboard");
+</script>
+</body>
+</html>
